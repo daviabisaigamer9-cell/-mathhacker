@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projeto P2 | Elite Math Hack</title>
+    <meta name="description" content="Sistema treinado no Método OED para domínio total de Polinômios e Álgebra da Rede Elite. Plataforma de IA Educacional.">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        neon: { purple: '#9333ea', cyan: '#06b6d4' },
+                        dark: { 900: '#050505', 800: '#121212', 700: '#1a1a1a' }
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: #050505;
+            color: #e5e5e5;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background-color: #050505;
+        }
+
+        .glass-panel {
+            background: rgba(18, 18, 18, 0.6);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(147, 51, 234, 0.15);
+        }
+
+        .neon-text {
+            text-shadow: 0 0 20px rgba(147, 51, 234, 0.8);
+        }
+
+        .btn-cyber {
+            box-shadow: 0 0 15px rgba(147, 51, 234, 0.5);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-cyber:hover {
+            box-shadow: 0 0 30px rgba(147, 51, 234, 0.9);
+            transform: translateY(-3px);
+        }
+
+        /* Animações de entrada suaves */
+        .fade-up {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        .fade-up-delay-1 { animation-delay: 0.15s; }
+        .fade-up-delay-2 { animation-delay: 0.3s; }
+        .fade-up-delay-3 { animation-delay: 0.45s; }
+        .fade-up-delay-4 { animation-delay: 0.6s; }
+
+        @keyframes fadeUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Animação de flutuação sutil */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .float-anim {
+            animation: float 4s ease-in-out infinite;
+        }
+
+        /* Glow nos cards ao hover */
+        .card-glow {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card-glow:hover {
+            box-shadow: 0 0 30px rgba(147, 51, 234, 0.25);
+            border-color: rgba(147, 51, 234, 0.6);
+            transform: translateY(-4px);
+        }
+
+        /* Scrollbar Customizada */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0a0a0a; }
+        ::-webkit-scrollbar-thumb { background: #9333ea; border-radius: 10px; }
+    </style>
+</head>
+
+<body class="antialiased selection:bg-purple-600 selection:text-white">
+
+    <!-- FUNDO INTERATIVO DE PARTÍCULAS (Rede Neural) -->
+    <div id="particles-js"></div>
+
+    <!-- NAVBAR -->
+    <nav class="fixed w-full top-0 z-50 glass-panel h-20 flex items-center justify-between px-6 md:px-8 border-b border-purple-500/20">
+        <div class="flex items-center gap-3">
+            <div class="w-3 h-3 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_10px_#06b6d4]"></div>
+            <span class="font-black text-2xl tracking-tighter neon-text">PROJETO<span class="text-purple-500">P2</span></span>
+            <span class="hidden md:block text-[10px] bg-purple-500/20 border border-purple-500/40 px-2 py-0.5 rounded text-purple-400 font-mono italic ml-2">v5.0 PREMIUM</span>
+        </div>
+        <div class="hidden md:flex gap-8 text-sm font-mono text-gray-400">
+            <a href="#sobre" class="hover:text-purple-400 transition-all duration-300">/QUEM SOU</a>
+            <a href="#metodo" class="hover:text-purple-400 transition-all duration-300">/MÉTODO</a>
+            <a href="#plano" class="hover:text-cyan-400 transition-all duration-300">/PLANO</a>
+        </div>
+        <a href="app.html" class="font-mono text-xs bg-purple-600 px-6 py-2.5 rounded-lg hover:bg-purple-500 text-white font-bold btn-cyber uppercase tracking-widest">Acessar Sistema</a>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <section class="min-h-screen flex items-center justify-center pt-20 px-6 text-center relative">
+        <div class="max-w-4xl mx-auto">
+            <div class="fade-up inline-block mb-4 px-4 py-1.5 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-cyan-400 text-xs font-mono uppercase tracking-widest">
+                Sistema treinado no Método OED
+            </div>
+            <h1 class="fade-up fade-up-delay-1 text-5xl md:text-7xl font-black mb-6 leading-tight">
+                O CÓDIGO DA <br>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-purple-500 to-cyan-400 neon-text">NOTA DEZ.</span>
+            </h1>
+            <p class="fade-up fade-up-delay-2 text-gray-400 text-lg md:text-xl mb-10 max-w-2xl mx-auto leading-relaxed">
+                Não estude mais. Estude melhor. Plataforma de IA treinada com o Guia do Professor para domínio total de Polinômios e Álgebra da Rede Elite.
+            </p>
+            <div class="fade-up fade-up-delay-3 flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="app.html" class="bg-purple-600 px-8 py-4 rounded-xl font-bold text-sm hover:bg-purple-500 btn-cyber font-mono uppercase">
+                    ⚡ Ativar Sexta-Feira
+                </a>
+                <a href="#metodo" class="bg-dark-800 border border-purple-500/30 px-8 py-4 rounded-xl font-bold text-sm text-purple-400 font-mono uppercase transition-all duration-300 hover:border-purple-500/60 hover:bg-dark-700">
+                    Ver Módulos
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- SEÇÃO: QUEM SOU -->
+    <section id="sobre" class="py-24 px-6 glass-panel relative z-10 border-y border-purple-500/20">
+        <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+            <div class="order-2 md:order-1 space-y-6">
+                <div class="inline-block px-3 py-1 rounded-full border border-purple-500/30 bg-purple-500/10 text-purple-400 text-[10px] font-mono uppercase tracking-widest mb-2">
+                    Perfil do Operador
+                </div>
+                <h2 class="text-3xl font-black text-white">ARQUITETO DO <span class="text-purple-500">SISTEMA</span></h2>
+                <p class="text-gray-400 leading-relaxed text-sm">Fala, rapaziada! Aqui é o Davi. Criei o MathHacker não pra ser só mais um 'site de matemática', mas sim pra gente transformar isso em 'matemágica'.</p>
+                <p class="text-gray-400 leading-relaxed text-sm">Quem tá no dia a dia sabe que a nossa escola tem um padrão de cobrança previsível nas provas do OED. Juntei meus resumos táticos e treinei a IA "Sexta-feira" pra pensar exatamente como quem elabora as questões. O nosso foco é bater a nota máxima direto e amassar a prova. O objetivo? Automatizar o sucesso da nossa turma.</p>
+                <div class="inline-block bg-purple-900/40 border border-purple-500/50 p-4 rounded-xl mt-4">
+                    <p class="text-xs font-mono text-purple-400">"Errar é humano, bugar é de silício. Aprender é o nosso protocolo."</p>
+                </div>
+            </div>
+            <div class="order-1 md:order-2 flex justify-center">
+                <div class="w-64 h-64 rounded-3xl border-2 border-purple-500/50 overflow-hidden bg-dark-900 shadow-[0_0_40px_rgba(147,51,234,0.3)] rotate-3 hover:rotate-0 transition-all duration-500 relative float-anim">
+                    <!-- Foto do Davi aqui (davi.jpg) -->
+                    <div class="absolute inset-0 bg-gradient-to-t from-purple-900/80 via-transparent to-transparent flex items-end justify-center pb-4">
+                        <span class="font-mono text-xs font-bold text-purple-200 bg-black/50 px-3 py-1 rounded-lg">DAVI // FUNDADOR</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SEÇÃO: MÓDULOS DE COMBATE (MÉTODO DETALHADO) -->
+    <section id="metodo" class="py-24 px-6 relative z-10">
+        <div class="max-w-6xl mx-auto text-center">
+            <div class="inline-block px-3 py-1 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-cyan-400 text-[10px] font-mono uppercase tracking-widest mb-4">
+                Cap. 5, 6 e 8 do OED
+            </div>
+            <h2 class="text-3xl font-black text-white mb-4">MÓDULOS DE <span class="text-cyan-400">COMBATE</span></h2>
+            <p class="text-gray-500 text-sm mb-12 max-w-xl mx-auto">Cada módulo foi destrinchado a partir do Guia do Professor. Sem enrolação, só o que cai na prova.</p>
+
+            <div class="grid md:grid-cols-3 lg:grid-cols-5 gap-4">
+                <!-- Card 1: Monômios -->
+                <div class="glass-panel p-6 rounded-2xl border border-purple-500/20 card-glow text-left group">
+                    <div class="text-3xl mb-3 group-hover:scale-110 transition-transform duration-300">🎯</div>
+                    <h3 class="font-bold text-sm text-white mb-2 font-mono">MONÔMIOS</h3>
+                    <p class="text-[11px] text-gray-400 leading-relaxed">Graus, coeficientes e a regra de ouro: só soma com a MESMA parte literal.</p>
+                </div>
+                <!-- Card 2: Binômios -->
+                <div class="glass-panel p-6 rounded-2xl border border-purple-500/20 card-glow text-left group">
+                    <div class="text-3xl mb-3 group-hover:scale-110 transition-transform duration-300">⚔️</div>
+                    <h3 class="font-bold text-sm text-white mb-2 font-mono">BINÔMIOS</h3>
+                    <p class="text-[11px] text-gray-400 leading-relaxed">Soma de dois termos. Produtos notáveis e o macete da distribuição rápida.</p>
+                </div>
+                <!-- Card 3: Trinômios -->
+                <div class="glass-panel p-6 rounded-2xl border border-purple-500/20 card-glow text-left group">
+                    <div class="text-3xl mb-3 group-hover:scale-110 transition-transform duration-300">🔺</div>
+                    <h3 class="font-bold text-sm text-white mb-2 font-mono">TRINÔMIOS</h3>
+                    <p class="text-[11px] text-gray-400 leading-relaxed">O quadrado perfeito e fatoração. Como identificar e simplificar em segundos.</p>
+                </div>
+                <!-- Card 4: Polinômios -->
+                <div class="glass-panel p-6 rounded-2xl border border-purple-500/20 card-glow text-left group">
+                    <div class="text-3xl mb-3 group-hover:scale-110 transition-transform duration-300">🧩</div>
+                    <h3 class="font-bold text-sm text-white mb-2 font-mono">POLINÔMIOS</h3>
+                    <p class="text-[11px] text-gray-400 leading-relaxed">Adição, subtração e multiplicação de polinômios. Grau e organização.</p>
+                </div>
+                <!-- Card 5: Operações -->
+                <div class="glass-panel p-6 rounded-2xl border border-cyan-500/20 card-glow text-left group">
+                    <div class="text-3xl mb-3 group-hover:scale-110 transition-transform duration-300">⚡</div>
+                    <h3 class="font-bold text-sm text-cyan-400 mb-2 font-mono">OPERAÇÕES</h3>
+                    <p class="text-[11px] text-gray-400 leading-relaxed">Divisão, potenciação e as pegadinhas com sinais que derrubam na prova.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SEÇÃO: PLANOS -->
+    <section id="plano" class="py-24 px-6 relative z-10">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-12">
+                <div class="inline-block px-3 py-1 rounded-full border border-purple-500/30 bg-purple-500/10 text-purple-400 text-[10px] font-mono uppercase tracking-widest mb-4">
+                    Escolha seu arsenal
+                </div>
+                <h2 class="text-3xl font-black text-white">PLANOS DE <span class="text-purple-500">ACESSO</span></h2>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8 items-center">
+                <!-- Protocolo P2 -->
+                <div class="glass-panel p-8 rounded-3xl border border-purple-500/20 card-glow text-center flex flex-col h-full">
+                    <h3 class="font-bold text-xl text-white mb-2 font-mono">Protocolo P2</h3>
+                    <div class="my-4">
+                        <span class="text-4xl font-black text-white">R$ 15</span>
+                        <span class="text-gray-400 text-sm">,00</span>
+                    </div>
+                    <p class="text-xs text-gray-400 mb-6 flex-1">Acesso completo até o dia da prova P2.</p>
+                    <a href="https://wa.me/5567992377150?text=Fala%20Davi!%20Quero%20o%20Protocolo%20P2%20(R$15)" target="_blank"
+                        class="w-full bg-dark-800 hover:bg-dark-700 border border-purple-500/30 py-3 rounded-xl font-bold text-xs text-purple-400 transition-all duration-300 uppercase tracking-wider">
+                        Adquirir Plano
+                    </a>
+                </div>
+
+                <!-- Combo Elite (Destaque) -->
+                <div class="glass-panel p-8 rounded-3xl border-2 border-purple-500/60 shadow-[0_0_30px_rgba(147,51,234,0.3)] text-center flex flex-col h-full relative transform md:-translate-y-4">
+                    <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-purple-600 text-white text-[10px] font-black px-4 py-1 rounded-full uppercase tracking-widest whitespace-nowrap">PROMOÇÃO TÁTICA</div>
+                    <h3 class="font-bold text-2xl text-white mb-2 font-mono mt-2">Combo Elite</h3>
+                    <div class="my-4">
+                        <span class="text-5xl font-black text-white">R$ 30</span>
+                        <span class="text-gray-400 text-sm">,00</span>
+                    </div>
+                    <p class="text-xs text-gray-400 mb-6 flex-1">Os dois planos juntos para amassar em todas as frentes.</p>
+                    <a href="https://wa.me/5567992377150?text=Fala%20Davi!%20Quero%20o%20Combo%20Elite%20(R$30)" target="_blank"
+                        class="w-full bg-purple-600 hover:bg-purple-500 py-4 rounded-xl font-black text-sm btn-cyber uppercase tracking-wider text-white">
+                        Adquirir Combo
+                    </a>
+                </div>
+
+                <!-- Matemática Avançada -->
+                <div class="glass-panel p-8 rounded-3xl border border-purple-500/20 card-glow text-center flex flex-col h-full">
+                    <h3 class="font-bold text-xl text-white mb-2 font-mono">Matemática Avançada</h3>
+                    <div class="my-4">
+                        <span class="text-4xl font-black text-white">R$ 20</span>
+                        <span class="text-gray-400 text-sm">,00</span>
+                    </div>
+                    <p class="text-xs text-gray-400 mb-6 flex-1">Funções, Equações do 2º Grau e Álgebra de Elite.</p>
+                    <a href="https://wa.me/5567992377150?text=Fala%20Davi!%20Quero%20Matemática%20Avançada%20(R$20)" target="_blank"
+                        class="w-full bg-dark-800 hover:bg-dark-700 border border-purple-500/30 py-3 rounded-xl font-bold text-xs text-purple-400 transition-all duration-300 uppercase tracking-wider">
+                        Adquirir Plano
+                    </a>
+                </div>
+            </div>
+            
+            <div class="text-center mt-12">
+                <p class="text-[10px] text-gray-600 font-mono">Pagamento via PIX • Chave entregue na hora pelo WhatsApp</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="py-8 px-6 border-t border-purple-500/10 text-center relative z-10">
+        <p class="text-[10px] text-gray-600 font-mono">PROJETO P2 v5.0 — Construído por Davi • Sistema treinado no Método OED • Elite Mace</p>
+    </footer>
+
+    <!-- INICIALIZAÇÃO DAS PARTÍCULAS -->
+    <script>
+        particlesJS("particles-js", {
+            "particles": {
+                "number": { "value": 80, "density": { "enable": true, "value_area": 800 } },
+                "color": { "value": ["#9333ea", "#06b6d4"] },
+                "shape": { "type": "circle" },
+                "opacity": { "value": 0.5, "random": false },
+                "size": { "value": 3, "random": true },
+                "line_linked": { "enable": true, "distance": 150, "color": "#9333ea", "opacity": 0.2, "width": 1 },
+                "move": { "enable": true, "speed": 2, "direction": "none", "random": false, "straight": false, "out_mode": "out", "bounce": false }
+            },
+            "interactivity": {
+                "detect_on": "canvas",
+                "events": {
+                    "onhover": { "enable": true, "mode": "grab" },
+                    "onclick": { "enable": true, "mode": "push" },
+                    "resize": true
+                },
+                "modes": {
+                    "grab": { "distance": 140, "line_linked": { "opacity": 0.8 } },
+                    "push": { "particles_nb": 4 }
+                }
+            },
+            "retina_detect": true
+        });
+    </script>
+</body>
+
+</html>

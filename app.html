@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sexta-Feira | Sistema IA v7.5</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { theme: { extend: { colors: { neon: { purple: '#9333ea', cyan: '#06b6d4' }, dark: { 900: '#050505', 800: '#121212' } } } } }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&family=Inter:wght@400;900&display=swap" rel="stylesheet">
+    <style>
+        body { background: #050505; color: #e5e5e5; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        .glass-panel { background: rgba(14,14,14,0.75); backdrop-filter: blur(24px); border: 1px solid rgba(147,51,234,0.15); box-shadow: 0 8px 40px rgba(0,0,0,0.6); }
+        .neon-text { text-shadow: 0 0 15px rgba(147,51,234,0.6); }
+        ::-webkit-scrollbar { width: 5px; } ::-webkit-scrollbar-thumb { background: #9333ea; border-radius: 10px; }
+        /* Animação suave de entrada para mensagens */
+        .msg-fade-in { animation: msgFade 0.3s ease-out forwards; }
+        @keyframes msgFade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        /* Hover premium nos botões */
+        .btn-premium { transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
+        .btn-premium:hover { box-shadow: 0 0 20px rgba(147,51,234,0.2); transform: translateY(-1px); }
+    </style>
+</head>
+<body class="antialiased selection:bg-purple-600 selection:text-white">
+    <!-- NAVBAR -->
+    <nav class="fixed w-full top-0 z-50 glass-panel border-b border-purple-500/20" style="padding-bottom: 0;">
+        <div class="h-16 flex items-center justify-between px-6">
+            <div class="flex items-center gap-3">
+                <a href="index.html" class="text-gray-500 hover:text-purple-400 font-mono text-xs transition-colors duration-200">← LOBBY</a>
+                <span class="font-black text-xl tracking-tighter neon-text ml-4">PROJETO<span class="text-purple-500">P2</span></span>
+            </div>
+            <div class="flex items-center gap-3">
+                <button onclick="triggerPaywall()" class="text-[10px] font-mono border border-green-500/30 bg-green-500/10 px-3 py-1.5 rounded-lg text-green-400 font-bold hover:bg-green-500/20 transition-all duration-200 btn-premium hidden" id="btnAdquirir">
+                    🔑 ADQUIRIR ACESSO
+                </button>
+                <div id="statusDemo" class="text-[10px] font-mono border border-purple-500/30 bg-dark-800 px-3 py-1.5 rounded-lg text-purple-400 font-bold">
+                    CARREGANDO DADOS...
+                </div>
+            </div>
+        </div>
+        <!-- BARRA DE XP -->
+        <div class="px-6 pb-2">
+            <div class="flex items-center justify-between mb-1">
+                <span id="levelName" class="text-[10px] font-mono text-purple-400 font-bold">🔰 Recruta de Equações</span>
+                <span id="xpText" class="text-[10px] font-mono text-gray-500">0 XP</span>
+            </div>
+            <div class="w-full bg-dark-800 rounded-full h-1.5 overflow-hidden">
+                <div id="xpBar" class="h-full bg-gradient-to-r from-purple-600 to-purple-400 rounded-full transition-all duration-700 ease-out" style="width: 0%"></div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ÁREA DO CHAT -->
+    <main class="max-w-4xl mx-auto px-4 pt-28 pb-28 min-h-screen">
+        <div class="glass-panel rounded-3xl overflow-hidden flex flex-col h-[70vh] shadow-2xl relative">
+            <div id="chatBox" class="flex-1 overflow-y-auto p-6 space-y-4 font-mono text-sm bg-black/30">
+                <div class="text-green-400 opacity-80 text-xs mb-4">Sexta-Feira v7.5 (Sessão Criptografada + Persistência) [OK]</div>
+            </div>
+            
+            <div id="typing" class="px-6 py-2 text-[10px] text-purple-500 hidden italic font-mono animate-pulse">Sexta processando...</div>
+            <input type="file" id="imageUpload" accept="image/*" class="hidden">
+            
+            <!-- Preview de imagem anexada -->
+            <div id="imagePreview" class="px-4 py-2 hidden">
+                <div class="flex items-center gap-2 bg-purple-900/30 border border-purple-500/30 rounded-3xl px-3 py-2">
+                    <img id="previewImg" src="" class="w-8 h-8 rounded-xl object-cover">
+                    <span class="text-[10px] text-purple-400">Imagem Anexada</span>
+                    <button onclick="clearImage()" class="text-red-400 text-xs font-bold ml-auto hover:text-red-300 transition-colors">✕</button>
+                </div>
+            </div>
+
+            <!-- Barra de Input -->
+            <div class="p-4 bg-dark-900/90 border-t border-purple-500/20 flex gap-2 items-center">
+                <button onclick="document.getElementById('imageUpload').click()" class="w-11 h-11 rounded-3xl bg-purple-900/40 text-purple-400 hover:bg-purple-600 hover:text-white border border-purple-500/40 text-lg transition-all duration-200 btn-premium">📷</button>
+                <input type="text" id="userInput" placeholder="> Digite seu comando..." class="flex-1 bg-dark-800 border border-purple-500/30 rounded-3xl px-4 py-3 text-xs font-mono text-white outline-none focus:border-purple-500/60 transition-colors">
+                <button onclick="sendMsg()" class="bg-purple-600 px-6 py-3 rounded-3xl font-bold text-xs hover:bg-purple-500 transition-all duration-200 btn-premium">EXECUTAR</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- MODAL: PAYWALL (backdrop-blur-2xl) -->
+    <div id="paywall" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-2xl hidden transition-all duration-500">
+        <div class="glass-panel p-10 rounded-3xl max-w-sm w-full text-center border-t-2 border-purple-600 shadow-[0_0_60px_rgba(147,51,234,0.2)]">
+            <div class="text-4xl mb-4">🔒</div>
+            <h2 class="text-3xl font-black mb-2 neon-text">LIMITE ATINGIDO</h2>
+            <p class="text-gray-400 text-xs mb-6">Insira sua chave de acesso única para desbloquear o sistema completo.</p>
+            <input type="text" id="masterKey" placeholder="ELITE-XXXXXX" class="w-full bg-black border border-purple-500/50 p-4 rounded-3xl text-center mb-4 text-purple-400 uppercase font-mono tracking-widest outline-none focus:border-purple-500 transition-colors">
+            <p id="authError" class="text-red-400 text-xs mb-3 hidden"></p>
+            <button onclick="authenticate()" class="w-full bg-purple-600 p-4 rounded-3xl font-black mb-4 hover:bg-purple-500 transition-all duration-200 btn-premium">⚡ ATIVAR PROTOCOLO</button>
+            <div class="flex gap-2 justify-center">
+                <a href="https://wa.me/5567992377150?text=Fala%20Davi!%20Quero%20comprar%20uma%20chave%20de%20acesso!" target="_blank" class="text-green-400 text-xs hover:underline">💬 Comprar Chave</a>
+                <span class="text-gray-600 text-xs">•</span>
+                <button onclick="document.getElementById('paywall').classList.add('hidden')" class="text-gray-500 text-xs hover:text-gray-300 transition-colors">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // ESTADO GLOBAL
+        // ============================================
+        let isUnlocked = false;
+        let selectedImageData = null;
+        
+        // ============================================
+        // INICIALIZAÇÃO: Carrega sessão + histórico
+        // ============================================
+        window.onload = async () => {
+            try {
+                // 1. Carrega dados da sessão (queries, unlocked)
+                const meRes = await fetch('/api/me', { credentials: 'include' });
+                const meData = await meRes.json();
+                updateUI(meData.queries_used, meData.limit, meData.unlocked, meData.xp, meData.level);
+
+                // 2. Carrega histórico do banco (PERSISTÊNCIA)
+                await loadHistory();
+            } catch (e) {
+                console.error("Servidor offline", e);
+            }
+        };
+
+        // ============================================
+        // PERSISTÊNCIA: Carrega mensagens antigas do DB
+        // ============================================
+        async function loadHistory() {
+            try {
+                const res = await fetch('/api/history', { credentials: 'include' });
+                const data = await res.json();
+                
+                if (data.messages && data.messages.length > 0) {
+                    data.messages.forEach(msg => {
+                        const who = msg.role === 'user' ? 'VC' : 'SEXTA';
+                        const color = msg.role === 'user' ? 'blue' : 'purple';
+                        // Mensagens do histórico aparecem instantaneamente (sem typing)
+                        appendMsg(who, msg.content, color, true);
+                    });
+                }
+            } catch (e) {
+                console.error("Erro ao carregar histórico:", e);
+            }
+        }
+
+        // ============================================
+        // ATUALIZAÇÃO DA UI (Status Demo / Master)
+        // ============================================
+        function updateUI(used, limit, unlocked, xp, level) {
+            isUnlocked = unlocked;
+            const status = document.getElementById('statusDemo');
+            const btnAdquirir = document.getElementById('btnAdquirir');
+            
+            if (unlocked) {
+                status.innerHTML = `<span class="text-green-400">🔓 ACESSO MASTER</span>`;
+                btnAdquirir.classList.add('hidden');
+            } else {
+                const remaining = Math.max(0, limit - used);
+                status.innerHTML = `DEMO (${remaining}/${limit})`;
+                btnAdquirir.classList.remove('hidden');
+                if (used >= limit) triggerPaywall();
+            }
+
+            // Atualiza barra de XP
+            if (xp !== undefined && level) {
+                document.getElementById('levelName').textContent = level.name;
+                document.getElementById('xpText').textContent = `${xp} XP`;
+                
+                // Calcula % da barra
+                let percent = 0;
+                if (level.nextXp === null) {
+                    percent = 100; // Nível máximo
+                } else {
+                    const prevThreshold = level.tier === 1 ? 0 : level.tier === 2 ? 101 : level.tier === 3 ? 301 : 500;
+                    percent = Math.min(100, ((xp - prevThreshold) / (level.nextXp - prevThreshold)) * 100);
+                }
+                document.getElementById('xpBar').style.width = percent + '%';
+            }
+        }
+
+        // ============================================
+        // UPLOAD DE IMAGEM (Base64)
+        // ============================================
+        document.getElementById('imageUpload').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                selectedImageData = { base64: event.target.result.split(',')[1], mimeType: file.type };
+                document.getElementById('previewImg').src = event.target.result;
+                document.getElementById('imagePreview').classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
+            e.target.value = '';
+        });
+
+        function clearImage() { 
+            selectedImageData = null; 
+            document.getElementById('imagePreview').classList.add('hidden'); 
+        }
+
+        // ============================================
+        // ENVIO DE MENSAGEM (texto + imagem)
+        // ============================================
+        async function sendMsg() {
+            const input = document.getElementById('userInput');
+            const val = input.value.trim();
+            if (!val && !selectedImageData) return;
+
+            appendMsg('VC', val || '[Imagem Anexada]', 'blue');
+            input.value = '';
+            document.getElementById('typing').classList.remove('hidden');
+
+            try {
+                const payload = { question: val || null };
+                if (selectedImageData) payload.imageData = selectedImageData;
+
+                const res = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify(payload)
+                });
+
+                if (res.status === 403) { 
+                    document.getElementById('typing').classList.add('hidden');
+                    triggerPaywall(); 
+                    return; 
+                }
+                
+                const data = await res.json();
+                document.getElementById('typing').classList.add('hidden');
+                appendMsg('SEXTA', data.answer, 'purple');
+                clearImage();
+                updateUI(data.queries_used, 40, data.unlocked, data.xp, data.level);
+
+            } catch (e) {
+                document.getElementById('typing').classList.add('hidden');
+                appendMsg('ERRO', 'Servidor offline. Verifique o terminal.', 'red');
+            }
+        }
+
+        // Atalho Enter para enviar
+        document.getElementById('userInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMsg();
+        });
+
+        // ============================================
+        // UTILITÁRIOS DE INTERFACE
+        // ============================================
+        
+        /**
+         * Renderiza uma mensagem no chat.
+         * @param {string} who - Quem enviou (VC, SEXTA, ERRO)
+         * @param {string} text - Conteúdo da mensagem
+         * @param {string} color - Cor do tema (blue, purple, red)
+         * @param {boolean} instant - Se true, aparece instantaneamente (histórico)
+         */
+        function appendMsg(who, text, color, instant = false) {
+            const box = document.getElementById('chatBox');
+            const isUser = who === 'VC';
+            const align = isUser ? 'ml-auto bg-blue-900/20' : 'mr-auto bg-dark-800/80';
+            
+            // Formata markdown básico para HTML
+            const htmlText = text
+                .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')
+                .replace(/\*(.*?)\*/g, '<i>$1</i>')
+                .replace(/\n/g, '<br>');
+            
+            const div = document.createElement('div');
+            div.className = `p-3 rounded-3xl border border-${color}-500/30 ${align} max-w-[85%] mt-3 font-sans text-sm text-gray-200 msg-fade-in`;
+            div.innerHTML = `<span class="text-[10px] block font-black text-${color}-400 mb-1">${who}</span>${htmlText}`;
+            box.appendChild(div);
+            box.scrollTop = box.scrollHeight;
+        }
+
+        function triggerPaywall() { 
+            document.getElementById('paywall').classList.remove('hidden'); 
+        }
+
+        // ============================================
+        // AUTENTICAÇÃO (Chaves Únicas v7.5)
+        // ============================================
+        async function authenticate() {
+            const key = document.getElementById('masterKey').value.trim();
+            const errorEl = document.getElementById('authError');
+            errorEl.classList.add('hidden');
+            
+            if (!key) {
+                errorEl.textContent = 'Digite uma chave de acesso.';
+                errorEl.classList.remove('hidden');
+                return;
+            }
+
+            try {
+                const res = await fetch('/api/auth', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ key })
+                });
+                
+                const data = await res.json();
+                
+                if (res.ok && data.success) {
+                    document.getElementById('paywall').classList.add('hidden');
+                    updateUI(0, 40, true);
+                } else {
+                    errorEl.textContent = data.message || 'Chave inválida!';
+                    errorEl.classList.remove('hidden');
+                }
+            } catch (e) {
+                errorEl.textContent = 'Erro de conexão com o servidor.';
+                errorEl.classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Painel do Fundador</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { theme: { extend: { colors: { neon: { purple: '#9333ea', cyan: '#06b6d4' }, dark: { 900: '#050505', 800: '#121212', 700: '#1a1a1a' } } } } }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { background: #050505; color: #e5e5e5; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        .glass-panel { background: rgba(14,14,14,0.75); backdrop-filter: blur(24px); border: 1px solid rgba(147,51,234,0.15); box-shadow: 0 8px 40px rgba(0,0,0,0.6); }
+        .neon-text { text-shadow: 0 0 15px rgba(147,51,234,0.6); }
+        .card-stat { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .card-stat:hover { transform: translateY(-4px); box-shadow: 0 0 30px rgba(147,51,234,0.2); }
+        ::-webkit-scrollbar { width: 5px; } ::-webkit-scrollbar-thumb { background: #9333ea; border-radius: 10px; }
+        .fade-in { animation: fadeUp 0.5s ease-out forwards; opacity: 0; }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+        .key-glow { animation: keyPulse 2s ease-in-out infinite; }
+        @keyframes keyPulse { 0%, 100% { box-shadow: 0 0 20px rgba(147,51,234,0.3); } 50% { box-shadow: 0 0 40px rgba(147,51,234,0.6); } }
+    </style>
+</head>
+<body class="antialiased selection:bg-purple-600 selection:text-white">
+
+    <!-- TELA DE BLOQUEIO (Senha Master) -->
+    <div id="lockScreen" class="fixed inset-0 z-[200] bg-black flex items-center justify-center">
+        <div class="glass-panel p-12 rounded-3xl max-w-md w-[90%] text-center border-t-2 border-purple-600">
+            <div class="text-5xl mb-4">🛡️</div>
+            <h1 class="text-2xl font-black neon-text mb-2">PAINEL DO FUNDADOR</h1>
+            <p class="text-gray-500 text-xs font-mono mb-8">Acesso restrito ao administrador do sistema.</p>
+            <input type="password" id="adminPassword" placeholder="SENHA MASTER" 
+                class="w-full bg-black border border-purple-500/50 p-4 rounded-3xl text-center text-purple-400 uppercase font-mono tracking-widest outline-none focus:border-purple-500 mb-4">
+            <p id="lockError" class="text-red-400 text-xs mb-3 hidden">Senha incorreta.</p>
+            <button onclick="unlockDashboard()" 
+                class="w-full bg-purple-600 p-4 rounded-3xl font-black hover:bg-purple-500 transition-all duration-200">
+                ACESSAR DASHBOARD
+            </button>
+            <p class="text-gray-700 text-[10px] font-mono mt-6">MathHacker v8.0 • Protocolo de Segurança Ativo</p>
+        </div>
+    </div>
+
+    <!-- DASHBOARD PRINCIPAL (Oculto até autenticar) -->
+    <div id="dashboard" class="hidden">
+        <!-- NAVBAR -->
+        <nav class="fixed w-full top-0 z-50 glass-panel h-16 flex items-center justify-between px-6 border-b border-purple-500/20">
+            <div class="flex items-center gap-3">
+                <a href="index.html" class="text-gray-500 hover:text-purple-400 font-mono text-xs transition-colors">← LOBBY</a>
+                <span class="font-black text-xl tracking-tighter neon-text ml-4">DASHBOARD<span class="text-purple-500"> SNIPER</span></span>
+            </div>
+            <div class="flex items-center gap-3">
+                <a href="app.html" class="text-[10px] font-mono border border-cyan-500/30 bg-cyan-500/10 px-3 py-1.5 rounded-lg text-cyan-400 font-bold hover:bg-cyan-500/20 transition-all">
+                    💬 IR PARA O CHAT
+                </a>
+                <div class="text-[10px] font-mono border border-purple-500/30 bg-dark-800 px-3 py-1.5 rounded-lg text-purple-400 font-bold">
+                    🛡️ ADMIN
+                </div>
+            </div>
+        </nav>
+
+        <main class="max-w-6xl mx-auto px-6 pt-24 pb-12">
+            <!-- CARDS DE ESTATÍSTICAS -->
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+                <div class="glass-panel p-6 rounded-3xl text-center card-stat fade-in" style="animation-delay: 0.1s">
+                    <div class="text-3xl mb-2">👥</div>
+                    <div id="statUsers" class="text-3xl font-black text-white">—</div>
+                    <div class="text-[10px] text-gray-500 font-mono uppercase tracking-wider mt-1">Usuários</div>
+                </div>
+                <div class="glass-panel p-6 rounded-3xl text-center card-stat fade-in" style="animation-delay: 0.2s">
+                    <div class="text-3xl mb-2">🔑</div>
+                    <div id="statKeysGen" class="text-3xl font-black text-purple-400">—</div>
+                    <div class="text-[10px] text-gray-500 font-mono uppercase tracking-wider mt-1">Chaves Geradas</div>
+                </div>
+                <div class="glass-panel p-6 rounded-3xl text-center card-stat fade-in" style="animation-delay: 0.3s">
+                    <div class="text-3xl mb-2">✅</div>
+                    <div id="statKeysUsed" class="text-3xl font-black text-green-400">—</div>
+                    <div class="text-[10px] text-gray-500 font-mono uppercase tracking-wider mt-1">Chaves Usadas</div>
+                </div>
+                <div class="glass-panel p-6 rounded-3xl text-center card-stat fade-in" style="animation-delay: 0.4s">
+                    <div class="text-3xl mb-2">💬</div>
+                    <div id="statMessages" class="text-3xl font-black text-cyan-400">—</div>
+                    <div class="text-[10px] text-gray-500 font-mono uppercase tracking-wider mt-1">Mensagens</div>
+                </div>
+                <div class="glass-panel p-6 rounded-3xl text-center card-stat fade-in" style="animation-delay: 0.5s">
+                    <div class="text-3xl mb-2">⭐</div>
+                    <div id="statPremium" class="text-3xl font-black text-yellow-400">—</div>
+                    <div class="text-[10px] text-gray-500 font-mono uppercase tracking-wider mt-1">Premium</div>
+                </div>
+            </div>
+
+            <!-- GERADOR DE CHAVES -->
+            <div class="glass-panel rounded-3xl p-8 mb-8 fade-in" style="animation-delay: 0.6s">
+                <div class="flex flex-col md:flex-row items-center gap-6">
+                    <div class="flex-1">
+                        <h2 class="text-lg font-black text-white mb-1">🔑 Gerador de Chaves de Acesso</h2>
+                        <p class="text-xs text-gray-500">Cada chave é de uso único. Gere, copie e venda via PIX/WhatsApp.</p>
+                    </div>
+                    <button onclick="generateKey()" 
+                        class="bg-green-600 hover:bg-green-500 px-8 py-4 rounded-3xl font-black text-sm uppercase tracking-wider transition-all duration-200 whitespace-nowrap hover:shadow-[0_0_25px_rgba(34,197,94,0.3)]">
+                        ⚡ GERAR NOVA CHAVE
+                    </button>
+                </div>
+                <!-- Área onde a chave gerada aparece -->
+                <div id="generatedKeyArea" class="hidden mt-6">
+                    <div class="bg-black/60 border-2 border-purple-500/40 rounded-3xl p-6 text-center key-glow">
+                        <div class="text-[10px] text-gray-500 font-mono uppercase tracking-widest mb-2">Chave Gerada</div>
+                        <div id="generatedKeyValue" class="text-3xl font-black text-purple-400 font-mono tracking-[6px] mb-4">—</div>
+                        <button onclick="copyGeneratedKey()" 
+                            class="bg-purple-600 hover:bg-purple-500 px-6 py-2 rounded-xl font-bold text-xs transition-all">
+                            📋 COPIAR
+                        </button>
+                        <span id="copyConfirm" class="text-green-400 text-xs ml-3 hidden">✓ Copiada!</span>
+                    </div>
+                </div>
+
+                <!-- Lista de chaves existentes -->
+                <div id="keysListArea" class="mt-6">
+                    <h3 class="text-xs font-bold text-gray-400 font-mono uppercase tracking-wider mb-3">Chaves no Sistema</h3>
+                    <div id="keysList" class="space-y-2 max-h-40 overflow-y-auto"></div>
+                </div>
+            </div>
+
+            <!-- RANKING DE ALUNOS (XP/Nível) -->
+            <div class="glass-panel rounded-3xl p-8 mb-8 fade-in" style="animation-delay: 0.65s">
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <h2 class="text-lg font-black text-white">🏆 Ranking de Alunos</h2>
+                        <p class="text-xs text-gray-500">Os alunos mais dedicados do sistema, ordenados por XP.</p>
+                    </div>
+                    <button onclick="loadUsers()" class="text-[10px] font-mono border border-yellow-500/30 bg-yellow-500/10 px-3 py-1.5 rounded-lg text-yellow-400 hover:bg-yellow-500/20 transition-all">
+                        🔄 ATUALIZAR
+                    </button>
+                </div>
+                <div id="usersTable" class="overflow-x-auto">
+                    <div class="text-gray-600 text-xs font-mono text-center py-8">Carregando...</div>
+                </div>
+            </div>
+
+            <!-- FEED DE PERGUNTAS DOS ALUNOS -->
+            <div class="glass-panel rounded-3xl p-8 fade-in" style="animation-delay: 0.7s">
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <h2 class="text-lg font-black text-white">📡 Feed de Perguntas dos Alunos</h2>
+                        <p class="text-xs text-gray-500">Últimas dúvidas enviadas para o Sexta-feira (tempo real).</p>
+                    </div>
+                    <button onclick="loadLogs()" class="text-[10px] font-mono border border-purple-500/30 bg-purple-500/10 px-3 py-1.5 rounded-lg text-purple-400 hover:bg-purple-500/20 transition-all">
+                        🔄 ATUALIZAR
+                    </button>
+                </div>
+                <div id="logsFeed" class="space-y-3 max-h-[400px] overflow-y-auto">
+                    <div class="text-gray-600 text-xs font-mono text-center py-8">Carregando dados...</div>
+                </div>
+            </div>
+        </main>
+
+        <!-- FOOTER -->
+        <footer class="py-6 px-6 text-center">
+            <p class="text-[10px] text-gray-700 font-mono">DASHBOARD SNIPER v8.0 — Acesso exclusivo do Fundador • MathHacker</p>
+        </footer>
+    </div>
+
+    <script>
+        const ADMIN_PASSWORD = 'SNIPER123';
+
+        // ============================================
+        // AUTENTICAÇÃO DO PAINEL
+        // ============================================
+        document.getElementById('adminPassword').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') unlockDashboard();
+        });
+
+        function unlockDashboard() {
+            const pwd = document.getElementById('adminPassword').value.trim();
+            if (pwd === ADMIN_PASSWORD) {
+                document.getElementById('lockScreen').classList.add('hidden');
+                document.getElementById('dashboard').classList.remove('hidden');
+                loadStats();
+                loadLogs();
+                loadKeys();
+                loadUsers();
+            } else {
+                document.getElementById('lockError').classList.remove('hidden');
+            }
+        }
+
+        // ============================================
+        // CARREGAR ESTATÍSTICAS
+        // ============================================
+        async function loadStats() {
+            try {
+                const res = await fetch('/api/admin/stats');
+                const data = await res.json();
+                document.getElementById('statUsers').textContent = data.users;
+                document.getElementById('statKeysGen').textContent = data.keysGenerated;
+                document.getElementById('statKeysUsed').textContent = data.keysUsed;
+                document.getElementById('statMessages').textContent = data.totalMessages;
+                document.getElementById('statPremium').textContent = data.premiumUsers;
+            } catch (e) {
+                console.error('Erro ao carregar stats:', e);
+            }
+        }
+
+        // ============================================
+        // CARREGAR LOGS (FEED DE PERGUNTAS)
+        // ============================================
+        async function loadLogs() {
+            try {
+                const res = await fetch('/api/admin/logs');
+                const data = await res.json();
+                const feed = document.getElementById('logsFeed');
+                
+                if (!data.logs || data.logs.length === 0) {
+                    feed.innerHTML = '<div class="text-gray-600 text-xs font-mono text-center py-8">Nenhuma pergunta registrada ainda.</div>';
+                    return;
+                }
+
+                feed.innerHTML = data.logs.map(log => {
+                    const sessionShort = log.session_id ? log.session_id.substring(0, 8) : '???';
+                    const status = log.unlocked ? '<span class="text-green-400">PREMIUM</span>' : '<span class="text-yellow-400">DEMO</span>';
+                    const time = log.created_at || 'Sem data';
+                    const content = log.content.length > 120 ? log.content.substring(0, 120) + '...' : log.content;
+                    
+                    return `
+                        <div class="bg-black/40 border border-purple-500/10 rounded-2xl p-4 hover:border-purple-500/30 transition-all">
+                            <div class="flex items-center justify-between mb-2">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-[10px] font-mono text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded-lg">👤 ${sessionShort}...</span>
+                                    <span class="text-[10px] font-mono">${status}</span>
+                                </div>
+                                <span class="text-[10px] text-gray-600 font-mono">${time}</span>
+                            </div>
+                            <p class="text-sm text-gray-300">${content}</p>
+                        </div>
+                    `;
+                }).join('');
+            } catch (e) {
+                console.error('Erro ao carregar logs:', e);
+            }
+        }
+
+        // ============================================
+        // CARREGAR LISTA DE CHAVES
+        // ============================================
+        async function loadKeys() {
+            try {
+                const res = await fetch('/api/admin/keys');
+                const data = await res.json();
+                const list = document.getElementById('keysList');
+                
+                if (!data.keys || data.keys.length === 0) {
+                    list.innerHTML = '<div class="text-gray-600 text-xs font-mono">Nenhuma chave gerada.</div>';
+                    return;
+                }
+
+                list.innerHTML = data.keys.map(k => {
+                    const statusColor = k.used ? 'text-red-400 border-red-500/20' : 'text-green-400 border-green-500/20';
+                    const statusText = k.used ? '🔴 USADA' : '🟢 DISPONÍVEL';
+                    return `
+                        <div class="flex items-center justify-between bg-black/30 border ${statusColor} rounded-xl px-4 py-2">
+                            <span class="font-mono text-sm text-purple-300 tracking-wider">${k.key}</span>
+                            <span class="text-[10px] font-mono ${statusColor}">${statusText}</span>
+                        </div>
+                    `;
+                }).join('');
+            } catch (e) {
+                console.error('Erro ao carregar chaves:', e);
+            }
+        }
+
+        // ============================================
+        // GERAR NOVA CHAVE
+        // ============================================
+        async function generateKey() {
+            try {
+                const res = await fetch('/api/admin/generate-key');
+                const data = await res.json();
+                
+                if (data.success) {
+                    document.getElementById('generatedKeyValue').textContent = data.key;
+                    document.getElementById('generatedKeyArea').classList.remove('hidden');
+                    // Atualiza stats e lista
+                    loadStats();
+                    loadKeys();
+                }
+            } catch (e) {
+                console.error('Erro ao gerar chave:', e);
+            }
+        }
+
+        function copyGeneratedKey() {
+            const key = document.getElementById('generatedKeyValue').textContent;
+            navigator.clipboard.writeText(key);
+            document.getElementById('copyConfirm').classList.remove('hidden');
+            setTimeout(() => document.getElementById('copyConfirm').classList.add('hidden'), 3000);
+        }
+
+        // ============================================
+        // RANKING DE ALUNOS (XP / Nível)
+        // ============================================
+        async function loadUsers() {
+            try {
+                const res = await fetch('/api/admin/users');
+                const data = await res.json();
+                const container = document.getElementById('usersTable');
+                
+                if (!data.users || data.users.length === 0) {
+                    container.innerHTML = '<div class="text-gray-600 text-xs font-mono text-center py-8">Nenhum usuário registrado.</div>';
+                    return;
+                }
+
+                const tierColors = {
+                    1: 'text-gray-400',
+                    2: 'text-blue-400',
+                    3: 'text-purple-400',
+                    4: 'text-yellow-400'
+                };
+
+                let html = `
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="text-[10px] font-mono text-gray-500 uppercase tracking-wider border-b border-purple-500/10">
+                                <th class="py-3 px-2">#</th>
+                                <th class="py-3 px-2">Sessão</th>
+                                <th class="py-3 px-2">Nível</th>
+                                <th class="py-3 px-2">XP</th>
+                                <th class="py-3 px-2">Queries</th>
+                                <th class="py-3 px-2">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+
+                data.users.forEach((u, i) => {
+                    const sessionShort = u.session_id ? u.session_id.substring(0, 10) : '???';
+                    const tierColor = tierColors[u.level.tier] || 'text-gray-400';
+                    const statusBadge = u.unlocked 
+                        ? '<span class="text-green-400 text-[10px] font-mono">⭐ PREMIUM</span>' 
+                        : '<span class="text-gray-500 text-[10px] font-mono">DEMO</span>';
+                    const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `${i + 1}`;
+                    
+                    // Barra de XP mini
+                    const xpPercent = u.level.nextXp ? Math.min(100, (u.xp / u.level.nextXp) * 100) : 100;
+
+                    html += `
+                        <tr class="border-b border-purple-500/5 hover:bg-purple-500/5 transition-colors">
+                            <td class="py-3 px-2 text-sm font-bold">${medal}</td>
+                            <td class="py-3 px-2">
+                                <span class="text-xs font-mono text-purple-300">${sessionShort}...</span>
+                            </td>
+                            <td class="py-3 px-2">
+                                <span class="text-xs font-bold ${tierColor}">${u.level.name}</span>
+                            </td>
+                            <td class="py-3 px-2">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-sm font-black text-white">${u.xp || 0}</span>
+                                    <div class="w-16 bg-dark-800 rounded-full h-1.5 overflow-hidden">
+                                        <div class="h-full bg-gradient-to-r from-purple-600 to-purple-400 rounded-full" style="width: ${xpPercent}%"></div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="py-3 px-2 text-xs text-gray-400 font-mono">${u.queries_used || 0}</td>
+                            <td class="py-3 px-2">${statusBadge}</td>
+                        </tr>
+                    `;
+                });
+
+                html += '</tbody></table>';
+                container.innerHTML = html;
+            } catch (e) {
+                console.error('Erro ao carregar usuários:', e);
+            }
+        }
+    </script>
+</body>
+</html>
