@@ -19,16 +19,19 @@ const PORT = process.env.PORT || 3000;
 // ============================================
 // 🔐 CONFIGURAÇÃO
 // ============================================
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY || 'AIzaSyCDPsSvRmshPa0TF9d4N2LGuMFI-jS5ASE';
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const DEMO_QUERY_LIMIT = 40;
+
 
 // ============================================
 // 🗄️ BANCO DE DADOS SQLITE (Memória de Longo Prazo)
 // ============================================
-const db = new sqlite3.Database(path.join(__dirname, 'database.sqlite'), (err) => {
+const DB_PATH = process.env.DB_PATH || path.join(__dirname, 'database.sqlite');
+const db = new sqlite3.Database(DB_PATH, (err) => {
     if (err) console.error("❌ Erro no DB:", err);
-    else console.log("🗄️  Banco de Dados conectado (Memória Ativada)");
+    else console.log(`🗄️  Banco de Dados conectado em: ${DB_PATH}`);
 });
+
 
 // Wrappers para usar async/await no SQLite
 const runDB = (query, params) => new Promise((res, rej) => db.run(query, params, function(err) { if(err) rej(err); else res(this); }));
@@ -70,7 +73,7 @@ const model = genAI.getGenerativeModel({
 // MIDDLEWARES
 // ============================================
 app.use(express.static(path.join(__dirname)));
-app.use(cors({ origin: 'http://localhost:3000', credentials: true })); 
+app.use(cors({ origin: true, credentials: true })); 
 app.use(express.json({ limit: '10mb' }));
 app.use(cookieParser());
 
