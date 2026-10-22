@@ -33,3 +33,8 @@ set GEMINI_API_KEY=sua_chave_aqui
 ```bash
 npm start
 ```
+
+## 🕳️ Extra: Simulador de Buraco Negro
+
+A pasta [`blackhole/`](blackhole/) traz o **Horizonte de Eventos**, um simulador relativístico de buraco negro (métrica de Kerr) que roda na GPU do celular via WebGL 2, com menu, cenários (Gargantua, M87\*, Sagitário A\*...), modo mergulho e painel de dados físicos. Com o servidor rodando, ele fica em `/blackhole/`. Veja o [README do simulador](blackhole/README.md) para abrir no celular e instalar como app.
+
