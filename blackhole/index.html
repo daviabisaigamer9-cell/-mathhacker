@@ -1797,11 +1797,28 @@ async function capture() {
     capturing = false; paused = false;
   }
 }
-function saveShot() {
+// Dentro do visualizador do claude.ai, downloads passam pela capacidade "downloads"; fora dele, link comum
+let dlNs;
+const downloadsNs = () => {
+  if (dlNs === undefined) {
+    dlNs = window.claude && typeof window.claude.use === 'function'
+      ? Promise.resolve(window.claude.use('downloads')).catch(() => null)
+      : Promise.resolve(null);
+  }
+  return dlNs;
+};
+async function saveShot() {
   if (!shotURL) return;
+  const filename = `buraco-negro-${new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-')}.png`;
+  const dl = await downloadsNs();
+  if (dl) {
+    try { await dl.save({ filename, data: shotBlob }); toast('Imagem salva.'); }
+    catch (e) { if (!e || e.code !== 'declined') toast('Não foi possível salvar aqui. Toque e segure a imagem para salvar.', 3600); }
+    return;
+  }
   const a = document.createElement('a');
   a.href = shotURL;
-  a.download = `buraco-negro-${new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-')}.png`;
+  a.download = filename;
   document.body.appendChild(a); a.click(); a.remove();
   toast('Se o download não começar, toque e segure a imagem para salvar.', 3600);
 }
@@ -2033,6 +2050,7 @@ window.__bh = {
   get gl() { return gl; }
 };
 
+downloadsNs();
 boot();
 })();
 </script>
